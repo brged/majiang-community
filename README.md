@@ -6,3 +6,6 @@
 * Github OAuth  
 * OkHttp  
 * Fastjson  
+* h2
+* mybatis
+* flyway
