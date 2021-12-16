@@ -37,4 +37,14 @@ public class GithubUser {
     public void setLogin(String login) {
         this.login = login;
     }
+
+    @Override
+    public String toString() {
+        return "GithubUser{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", bio='" + bio + '\'' +
+                ", login='" + login + '\'' +
+                '}';
+    }
 }
