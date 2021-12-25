@@ -47,13 +47,15 @@ public class AuthorizeController {
         GithubUser userInfo = githubProvider.getUserInfo(accessToken);
         System.out.println(userInfo);
         if(userInfo != null && userInfo.getLogin() != null) {
-            //登录成功，获取登录信息
+            //登录成功，获取登录信息，插入数据库中
             User user = new User();
             user.setName(userInfo.getLogin());
             user.setAccountId(String.valueOf(userInfo.getId()));
             user.setToken(UUID.randomUUID().toString());
             user.setGmtCreated(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreated());
+            // 头像 url
+            user.setAvatarUrl(userInfo.getAvatar_url());
             userMapper.insert(user);
             // user将之后由token来获取，此处并不需要使用session设置user
 //            servletRequest.getSession().setAttribute("user", user);
