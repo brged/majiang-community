@@ -1,6 +1,7 @@
 package life.majiang.community.controller;
 
 import life.majiang.community.dto.AccessTokenDTO;
+import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
@@ -26,9 +27,11 @@ public class IndexController {
     QuestionService questionService;
 
     @GetMapping("/")
-    public String hello(Model model, HttpServletRequest request){
+    public String hello(Model model, HttpServletRequest request,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page,
+                        @RequestParam(name = "size", defaultValue = "2") Integer size) {
         // 如果session中没有user对象，避免服务器重启后session中的user信息丢失
-        if (request.getSession().getAttribute("user")==null) {
+        if (request.getSession().getAttribute("user") == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 // cookies为null说明是第一次访问本系统
@@ -51,8 +54,8 @@ public class IndexController {
         }
 
         // 查询列表信息
-        List<QuestionDTO> questions=questionService.list();
-        model.addAttribute("questions", questions);
+        PaginationDTO pagination = questionService.list(page, size);
+        model.addAttribute("pagination", pagination);
         return "index";
     }
 }
