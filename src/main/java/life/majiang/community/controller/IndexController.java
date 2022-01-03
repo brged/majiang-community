@@ -29,7 +29,7 @@ public class IndexController {
     @GetMapping("/")
     public String hello(Model model, HttpServletRequest request,
                         @RequestParam(name = "page", defaultValue = "1") Integer page,
-                        @RequestParam(name = "size", defaultValue = "2") Integer size) {
+                        @RequestParam(name = "size", defaultValue = "3") Integer size) {
         // 如果session中没有user对象，避免服务器重启后session中的user信息丢失
         if (request.getSession().getAttribute("user") == null) {
             Cookie[] cookies = request.getCookies();

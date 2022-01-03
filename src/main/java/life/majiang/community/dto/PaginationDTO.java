@@ -25,6 +25,10 @@ public class PaginationDTO {
 
     public void setPagination(Integer totalCount, Integer page, Integer size) {
         // 计算总页数
+        // 判断每页条数是否超出总记录数, 每页限额50条
+        size = size > 50 ? 50 : size;
+        size = size>totalCount ? totalCount: size;
+
         Integer totalPage=totalCount/size;
         if(totalCount%size!=0){
             totalPage+=1;

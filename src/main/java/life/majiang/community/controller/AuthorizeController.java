@@ -45,18 +45,22 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         // 利用access token获取user信息
         GithubUser userInfo = githubProvider.getUserInfo(accessToken);
-        System.out.println(userInfo);
         if(userInfo != null && userInfo.getLogin() != null) {
-            //登录成功，获取登录信息，插入数据库中
-            User user = new User();
-            user.setName(userInfo.getLogin());
-            user.setAccountId(String.valueOf(userInfo.getId()));
-            user.setToken(UUID.randomUUID().toString());
-            user.setGmtCreated(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreated());
-            // 头像 url
-            user.setAvatarUrl(userInfo.getAvatar_url());
-            userMapper.insert(user);
+            System.out.println(userInfo);
+            // 如果数据库中有用户的accoutId存在，说明之前有登录成功，则将用户信息取出
+            User user = userMapper.getByAccountId(String.valueOf(userInfo.getId()));
+            if(user == null) {
+                //登录成功，获取登录信息，插入数据库中 (首次登录)
+                user = new User();
+                user.setName(userInfo.getLogin());
+                user.setAccountId(String.valueOf(userInfo.getId()));
+                user.setToken(UUID.randomUUID().toString());
+                user.setGmtCreated(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreated());
+                // 头像 url
+                user.setAvatarUrl(userInfo.getAvatar_url());
+                userMapper.insert(user);
+            }
             // user将之后由token来获取，此处并不需要使用session设置user
 //            servletRequest.getSession().setAttribute("user", user);
             // 同时将token保存到cookie用于检测user登录状态
