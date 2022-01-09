@@ -1,12 +1,15 @@
 package life.majiang.community.controller;
 
+import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.model.Question;
 import life.majiang.community.model.User;
+import life.majiang.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,7 +19,19 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
 
     @Autowired
-    private QuestionMapper questionMapper;
+    QuestionService questionService;
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        QuestionDTO question = questionService.getById(id);
+        // 页面数据回显
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("description", question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        // 标识 id 为更新而不是新增
+        model.addAttribute("id", question.getId());
+        return "publish";
+    }
 
     @GetMapping("/publish")
     public String publish(){
@@ -27,6 +42,7 @@ public class PublishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag,
+                            @RequestParam(value="id", required = false) Integer id,
                             HttpServletRequest servletRequest,
                             Model model){
         // 页面数据回显
@@ -54,6 +70,15 @@ public class PublishController {
             return "publish";
         }
 
+        //加入 creator 校验，当前登录用户仅可修改自己发布的问题
+        if(id !=null){
+            QuestionDTO questionDTO = questionService.getById(id);
+            // 修改的帖子用户 与 当前用户不符
+            if(questionDTO.getCreator() != user.getId()){
+                model.addAttribute("error", "非法用户操作");
+                return "publish";
+            }
+        }
 
         Question question = new Question();
         question.setTitle(title);
@@ -62,7 +87,9 @@ public class PublishController {
         question.setGmtCreated(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreated());
         question.setCreator(user.getId());
-        questionMapper.create(question);
+        question.setId(id);
+        // id为null则新增，不为null则修改
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
 }

@@ -68,9 +68,10 @@ public class QuestionService {
         // 指定用户id
         List<Question> questionList = questionMapper.listByUserId(id, offset, size);
         List<QuestionDTO> questionDTOList=new ArrayList<>();
+        User user;
         for (Question question : questionList) {
             // 通过question的creator来获取user对象
-            User user = userMapper.findById(question.getCreator());
+            user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             // 加入根据creator获取到的user对象
@@ -79,5 +80,27 @@ public class QuestionService {
         }
         paginationDTO.setQuestions(questionDTOList);
         return paginationDTO;
+    }
+
+    public QuestionDTO getById(Integer id) {
+        Question question = questionMapper.getById(id);
+        User user = userMapper.findById(question.getCreator());
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question, questionDTO);
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        if(question.getId()==null){
+            // add
+            question.setGmtCreated(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreated());
+            questionMapper.create(question);
+        } else {
+            // update
+            question.setGmtModified(System.currentTimeMillis());
+            questionMapper.update(question);
+        }
     }
 }
