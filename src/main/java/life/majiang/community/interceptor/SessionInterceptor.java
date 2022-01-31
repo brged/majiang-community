@@ -2,6 +2,7 @@ package life.majiang.community.interceptor;
 
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.User;
+import life.majiang.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
@@ -36,9 +38,14 @@ public class SessionInterceptor implements HandlerInterceptor {
                 }
                 if (token != null) {
                     // 重新从数据库中将用户信息查找出来
-                    User user = userMapper.getByToken(token);
-                    System.out.println(user);
-                    request.getSession().setAttribute("user", user);
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria()
+                            .andTokenEqualTo(token);
+                    List<User> users = userMapper.selectByExample(userExample);
+                    if (users.size() != 0) {
+                        request.getSession().setAttribute("user", users.get(0));
+                        System.out.println(users);
+                    }
                 }
 
             }

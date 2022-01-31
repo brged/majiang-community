@@ -27,7 +27,7 @@ public class PaginationDTO {
         // 计算总页数
         // 判断每页条数是否超出总记录数, 每页限额50条
         size = size > 50 ? 50 : size;
-        size = size>totalCount ? totalCount: size;
+        size = totalCount>0 && size>totalCount ? totalCount: size;
 
         Integer totalPage=totalCount/size;
         if(totalCount%size!=0){

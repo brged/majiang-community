@@ -9,3 +9,4 @@
 * h2
 * mybatis
 * flyway
+* mybatis generator(MBG)
