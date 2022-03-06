@@ -17,10 +17,19 @@
     <result column="DESCRIPTION" jdbcType="CLOB" property="description" />
   </resultMap>
 
+  <!-- 增加阅读数 -->
   <update id="incView" parameterType="life.majiang.community.model.Question">
     update QUESTION
     set
       VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 增加评论数 -->
+  <update id="incComment" parameterType="life.majiang.community.model.Question">
+    update QUESTION
+    set
+    COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where ID = #{id,jdbcType=INTEGER}
   </update>
 

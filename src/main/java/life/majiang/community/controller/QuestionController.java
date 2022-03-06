@@ -16,7 +16,7 @@ public class QuestionController {
     QuestionService questionService;
 
     @RequestMapping("/question/{id}")
-    public String question(@PathVariable("id") Integer id, Model model){
+    public String question(@PathVariable("id") Long id, Model model){
         // 增加阅读量
         questionService.incView(id);
 
