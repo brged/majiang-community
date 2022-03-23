@@ -16,6 +16,10 @@ button.btn-publish {
     width: 40px;
 }
 
+.media-body {
+    padding-top: 10px;
+}
+
 .text-desc {
     font-size: 12px;
     font-weight:normal;
@@ -29,8 +33,40 @@ button.btn-publish {
 .menu {
     color: #999;
     font-size: 13px;
+    display: block;
+    margin-bottom: 15px;
 }
 
 .jumbotron {
     margin: 50px;
+}
+
+.comment {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-list > .media {
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+hr.comment-sp {
+    margin-top: 0;
+}
+
+.reply-menu {
+    color: #999;
+    margin-top: 5px;
+}
+
+.reply-menu .reply-icon {
+    margin-right: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.reply-menu .reply-icon:hover {
+    color: #499ef3;
 }
