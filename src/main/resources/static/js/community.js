@@ -2,6 +2,10 @@
 function postComment(){
     var questionId = $("#question-id").val();
     var commentContent = $("#comment-content").val();
+    if(!commentContent){
+        alert("回复内容不能为空");
+        return
+    }
     $.ajax({
         type: "POST",
         url: "/comment",
@@ -10,7 +14,8 @@ function postComment(){
         success: function(response){
             console.log(response);
             if(response.code==200){
-                $("#comment-edit").hide();
+                // $("#comment-edit").hide();
+                window.location.reload();
             } else {
                 if(response.code==2003){
                     // 用户未登录
