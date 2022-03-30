@@ -6,9 +6,10 @@ import life.majiang.community.exception.ICustomizeErrorCode;
 import lombok.Data;
 
 @Data
-public class ResultDTO {
+public class ResultDTO <T> {
     private Integer code;
     private String message;
+    private T data;
 
     public static ResultDTO valueOf(Integer code, String message){
         ResultDTO resultDTO = new ResultDTO();
@@ -25,5 +26,10 @@ public class ResultDTO {
 
     public static ResultDTO ok(){
         return ResultDTO.valueOf(200, "请求成功");
+    }
+    public static <T> ResultDTO okOf(T t){
+        ResultDTO resultDTO = ResultDTO.valueOf(200, "请求成功");
+        resultDTO.setData(t);
+        return resultDTO;
     }
 }

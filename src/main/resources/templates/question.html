@@ -11,6 +11,7 @@
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script type="application/javascript" src="/js/bootstrap.min.js"></script>
     <script src="/js/community.js"></script>
+    <script src="/js/moment.min.js"></script>
 </head>
 <body>
 
@@ -58,8 +59,36 @@
                         <div th:text="${comment.content}">回复内容</div>
                         <div class="reply-menu">
                             <span class="glyphicon glyphicon-thumbs-up reply-icon"></span>
-                            <span class="glyphicon glyphicon-comment reply-icon"></span>
+                            <span class="reply-icon" th:data-id="${comment.id}"
+                                  onclick="collapseInComments(this)" data-collapse="">
+                                <span class="glyphicon glyphicon-comment"></span>
+                                <span th:text="${comment.commentCount}"></span>
+                            </span>
                             <span class="pull-right" th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <!--二级回复列表-->
+                        <div class="col-lg-12 collapse comment-list sub-comment-list" th:id="${'comment-'+comment.id}">
+                                <!--<div class="media" th:each="comment : ${comments}">
+                                    <div class="media-left">
+                                        <a href="#">
+                                            <img class="media-object img-rounded" th:src="${comment.user.avatarUrl}" src="https://avatars.githubusercontent.com/u/56257333?s=400&v=4" alt="avatar">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h5 class="media-heading">
+                                            <span th:text="${comment.user.name}"></span>
+                                        </h5>
+                                        &lt;!&ndash; 回复内容 &ndash;&gt;
+                                        <div th:text="${comment.content}">回复内容</div>
+                                        <div class="reply-menu">
+                                            <span class="pull-right" th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd HH:mm')}"></span>
+                                        </div>
+                                    </div>
+                                </div>-->
+                            <div class="col-lg-12">
+                                <input type="text" class="form-control" placeholder="评论一下..." th:id="${'input-'+comment.id}">
+                                <botton class="btn btn-success pull-right" type="button" onclick="comment(this)" th:data-id="${comment.id}">评论</botton>
+                            </div>
                         </div>
                     </div>
                 </div>

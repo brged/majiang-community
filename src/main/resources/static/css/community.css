@@ -56,6 +56,18 @@ button.btn-publish {
     border-bottom: 1px solid #eee;
 }
 
+
+.sub-comment-list {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding-top: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+.sub-comment-list .btn {
+    margin: 10px 0;
+}
+
 hr.comment-sp {
     margin-top: 0;
 }
@@ -69,6 +81,10 @@ hr.comment-sp {
     margin-right: 5px;
     font-size: 15px;
     cursor: pointer;
+}
+
+.reply-menu .reply-icon.active {
+    color: #499ef3;
 }
 
 .reply-menu .reply-icon:hover {
