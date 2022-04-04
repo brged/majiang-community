@@ -26,10 +26,15 @@ public class QuestionController {
     public String question(@PathVariable("id") Long id, Model model){
         // 增加阅读量
         questionService.incView(id);
+        // 本问题
         QuestionDTO questionDTO = questionService.getById(id);
+        // 相关问题
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        // 一级评论列表
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
+        model.addAttribute("relatedQuestions", relatedQuestions);
         return "question";
     }
 }

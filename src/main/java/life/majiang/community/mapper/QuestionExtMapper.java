@@ -11,4 +11,6 @@ public interface QuestionExtMapper {
 
     int incView(Question record);
     int incComment(Question record);
+    // 根据tag查找相关问题
+    List<Question> selectRelated(Question question);
 }
