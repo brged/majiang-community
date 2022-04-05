@@ -94,3 +94,15 @@ function collapseInComments(e){
         e.classList.add("active");
     }
 }
+
+function selectTag(e){
+    var value = e.getAttribute("data-tag");
+    var preValue = $("#tag").val();
+    if(preValue){
+        if(preValue.indexOf(value)==-1) {
+            $("#tag").val(preValue + ',' + value);
+        }
+    } else {
+        $("#tag").val(value)
+    }
+}
