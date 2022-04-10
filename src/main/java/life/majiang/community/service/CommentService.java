@@ -57,12 +57,14 @@ public class CommentService {
                 // 原问题不存在
                 throw new CustomizeErrorException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            comment.setCommentCount(0);
             commentMapper.insert(comment);
             // 原评论增加评论数
             parentComment.setCommentCount(1);
             commentExtMapper.incCommentCount(parentComment);
-            // 创建回复通知
-            createNotify(comment, parentComment.getCommenter(), commenter.getName(), parentQuestion.getTitle(), NotificationTypeEnum.REPLY_COMMENT, parentQuestion.getId());
+            if(comment.getCommenter() != parentComment.getCommenter())
+                // 创建回复通知 自己不给自己通知
+                createNotify(comment, parentComment.getCommenter(), commenter.getName(), parentComment.getContent(), NotificationTypeEnum.REPLY_COMMENT, parentQuestion.getId());
 
         } else {
             // 回复问题
@@ -71,12 +73,14 @@ public class CommentService {
                 // 原问题不存在
                 throw new CustomizeErrorException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            comment.setCommentCount(0);
             commentMapper.insert(comment);
             // 原问题增加评论数
             parentQuestion.setCommentCount(1);
             questionExtMapper.incComment(parentQuestion);
-            // 创建回复通知
-            createNotify(comment, parentQuestion.getCreator(), commenter.getName(), parentQuestion.getTitle(), NotificationTypeEnum.REPLY_QUESTION, parentQuestion.getId());
+            if(comment.getCommenter() != parentQuestion.getCreator())
+                // 创建回复通知 自己不给自己通知
+                createNotify(comment, parentQuestion.getCreator(), commenter.getName(), parentQuestion.getTitle(), NotificationTypeEnum.REPLY_QUESTION, parentQuestion.getId());
         }
     }
 
