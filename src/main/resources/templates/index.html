@@ -41,7 +41,7 @@
                     <h4 class="media-heading">
                         <a th:href="@{/question/{id}(id=${question.id})}" th:text="${question.title}">问题标题</a>
                     </h4>
-                    <span th:text="${question.description}"></span><br>
+                    <!--<span th:text="${question.description}"></span><br>-->
                     <!-- thymeleaf 行内表达式  commentCount:[[${question.commentCount}]] -->
                     <span class="text-desc">• <span th:text="${question.commentCount}"></span> 个回复 • <span th:text="${question.viewCount}"></span> 次浏览 • <span th:text="${#dates.format(question.gmtCreated, 'yyyy-MM-dd HH:mm')}"></span> </span>
                 </div>
