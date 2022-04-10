@@ -3,6 +3,7 @@ package life.majiang.community.interceptor;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.User;
 import life.majiang.community.model.UserExample;
+import life.majiang.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,14 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        User user = (User) request.getSession().getAttribute("user");
         // 如果session中没有user对象，避免服务器重启后session中的user信息丢失
-        if (request.getSession().getAttribute("user") == null) {
+        if (user == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 // cookies为null说明是第一次访问本系统
@@ -43,14 +47,18 @@ public class SessionInterceptor implements HandlerInterceptor {
                             .andTokenEqualTo(token);
                     List<User> users = userMapper.selectByExample(userExample);
                     if (users.size() != 0) {
-                        request.getSession().setAttribute("user", users.get(0));
-                        System.out.println(users);
+                        user = users.get(0);
+                        request.getSession().setAttribute("user", user);
+                        // System.out.println(users);
                     }
                 }
 
             }
         }
-
+        if(user!=null){
+            Long unreadCount = notificationService.unreadCount(user.getId());
+            request.getSession().setAttribute("unreadCount", unreadCount);
+        }
         return true;
     }
 

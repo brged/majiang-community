@@ -43,7 +43,7 @@ public class CommentController {
         comment.setLikeCount(1L);
         comment.setCommenter(user.getId());// 需要校验登录
         System.out.println(comment);
-        commentService.insert(comment);
+        commentService.insert(comment, user);
         return ResultDTO.ok();
     }
 

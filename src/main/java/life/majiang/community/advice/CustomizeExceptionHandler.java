@@ -51,7 +51,7 @@ public class CustomizeExceptionHandler {
         }
     }
 
-    /*private HttpStatus getStatus(HttpServletRequest request) {
+    /*private HttpStatus getType(HttpServletRequest request) {
         Integer code = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         HttpStatus status = HttpStatus.resolve(code);
         return (status != null) ? status : HttpStatus.INTERNAL_SERVER_ERROR;

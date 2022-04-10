@@ -1,6 +1,5 @@
 package life.majiang.community.service;
 
-import life.majiang.community.dto.CommentDTO;
 import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.exception.CustomizeErrorCode;
@@ -35,9 +34,9 @@ public class QuestionService {
         Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
         // 判断每页条数是否超出总记录数, 每页限额50条
         size = size > 50 ? 50 : size;
-        size = size>totalCount ? totalCount: size;
+        size = totalCount>0 && size>totalCount ? totalCount: size;
         // 分页对象
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
         paginationDTO.setPagination(totalCount, page, size);
         // 分页边界软限制
         if(page > paginationDTO.getTotalPage())
@@ -58,7 +57,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
@@ -72,7 +71,7 @@ public class QuestionService {
         size = size > 50 ? 50 : size;
         size = totalCount>0 && size>totalCount ? totalCount: size;
         // 分页对象
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
         paginationDTO.setPagination(totalCount, page, size);
         // 分页边界软限制，先判断totalCount可能会为0
         if(page > paginationDTO.getTotalPage())
@@ -95,7 +94,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 

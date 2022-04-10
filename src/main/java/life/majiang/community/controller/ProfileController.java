@@ -1,7 +1,9 @@
 package life.majiang.community.controller;
 
+import life.majiang.community.dto.NotificationDTO;
 import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.model.User;
+import life.majiang.community.service.NotificationService;
 import life.majiang.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,12 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class ProfileController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @RequestMapping("/profile/{action}")
     public String getProfile(@PathVariable("action")String action,
@@ -40,7 +46,13 @@ public class ProfileController {
         else if("replies".equals(action)){
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
+
+            PaginationDTO pagination = notificationService.list(user.getId(), page, size);
+            model.addAttribute("pagination", pagination);
         }
+        // 已放入session中
+//        Long unreadCount = notificationService.unreadCount(user.getId());
+//        model.addAttribute("unreadCount", unreadCount);
 
         return "profile";
     }
