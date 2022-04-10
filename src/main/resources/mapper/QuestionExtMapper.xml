@@ -40,4 +40,31 @@
     from QUESTION
     where id != #{id} and tag regexp #{tag}
   </select>
+
+  <!--搜索结果的问题数-->
+  <select id="countBySearch" parameterType="life.majiang.community.dto.QuestionQueryDTO" resultType="integer">
+    select
+    count(*)
+    from QUESTION
+    <where>
+      <if test="search != null">
+        and title regexp #{search}
+      </if>
+    </where>
+  </select>
+
+  <!--搜索问题-->
+  <select id="selectBySearch" parameterType="life.majiang.community.dto.QuestionQueryDTO" resultMap="BaseResultMap">
+    select
+    *
+    from QUESTION
+    <where>
+      <if test="search != null">
+        and title regexp #{search}
+      </if>
+    </where>
+    order by gmt_created desc
+    limit #{offset}, #{size}
+  </select>
+
 </mapper>

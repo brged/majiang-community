@@ -2,6 +2,7 @@ package life.majiang.community.service;
 
 import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.dto.QuestionQueryDTO;
 import life.majiang.community.exception.CustomizeErrorCode;
 import life.majiang.community.exception.CustomizeErrorException;
 import life.majiang.community.mapper.QuestionExtMapper;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +31,15 @@ public class QuestionService {
     @Autowired
     QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+        if(StringUtils.isNotBlank(search)){
+            String[] searchArr = StringUtils.split(search, " ");
+            search = Arrays.stream(searchArr).collect(Collectors.joining("|"));
+        }
         // 查询总页数
-        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         // 判断每页条数是否超出总记录数, 每页限额50条
         size = size > 50 ? 50 : size;
         size = totalCount>0 && size>totalCount ? totalCount: size;
@@ -44,9 +52,9 @@ public class QuestionService {
         if(page < 1)
             page =1;
         Integer offset=size*(page-1);
-        QuestionExample example = new QuestionExample();
-        example.setOrderByClause("gmt_created desc");
-        List<Question> questionList = questionMapper.selectByExampleWithBLOBsWithRowbounds(example, new RowBounds(offset, size));
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setOffset(offset);
+        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList=new ArrayList<>();
         for (Question question : questionList) {
             // 通过question的creator来获取user对象
@@ -142,7 +150,8 @@ public class QuestionService {
         }
         Question question = new Question();
         question.setId(questionDTO.getId());
-        String regexpTag = questionDTO.getTag().replace(",", "|");
+        String[] tagArr = StringUtils.split(questionDTO.getTag(), ",");
+        String regexpTag = Arrays.stream(tagArr).collect(Collectors.joining("|"));
         question.setTag(regexpTag);
         List<Question> relatedQuestion = questionExtMapper.selectRelated(question);
         List<QuestionDTO> questionDTOS = relatedQuestion.stream().map(q -> {

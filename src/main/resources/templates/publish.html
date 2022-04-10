@@ -39,6 +39,7 @@
                             height : "350px",
                             path   : "/editormd/lib/",
                             placeholder: "请输入问题描述",
+                            autoFocus: false,
                             imageUpload: true,
                             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                             imageUploadURL: "/file/upload"
@@ -88,5 +89,8 @@
         </div>
     </div>
 </div>
+
+<div th:insert="footer :: foot"></div>
+
 </body>
 </html>
