@@ -11,7 +11,7 @@
 * mybatis
 * flyway
 * mybatis generator(MBG)
-* Editor.md
+* Editor.md  
 ### 脚本
 * flyway  
 `mvn flyway:migrate`
