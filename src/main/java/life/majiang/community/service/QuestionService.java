@@ -31,14 +31,19 @@ public class QuestionService {
     @Autowired
     QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(String search, Integer page, Integer size) {
+    public PaginationDTO list(String search, String tag, Integer page, Integer size) {
         if(StringUtils.isNotBlank(search)){
             String[] searchArr = StringUtils.split(search, " ");
             search = Arrays.stream(searchArr).collect(Collectors.joining("|"));
         }
+        if(StringUtils.isNotBlank(tag)){
+            String[] tagArr = StringUtils.split(tag, ",");
+            tag = Arrays.stream(tagArr).collect(Collectors.joining("|"));
+        }
         // 查询总页数
         QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
         questionQueryDTO.setSearch(search);
+        questionQueryDTO.setTag(tag);
         Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         // 判断每页条数是否超出总记录数, 每页限额50条
         size = size > 50 ? 50 : size;
