@@ -1,9 +1,12 @@
 package life.majiang.community.interceptor;
 
 import life.majiang.community.mapper.UserMapper;
+import life.majiang.community.model.Ad;
 import life.majiang.community.model.User;
 import life.majiang.community.model.UserExample;
+import life.majiang.community.service.AdService;
 import life.majiang.community.service.NotificationService;
+import life.majiang.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -13,20 +16,28 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private AdService adService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        User user = (User) request.getSession().getAttribute("user");
+        HttpSession httpSession = request.getSession();
+        // 添加广告列表
+        if(httpSession.getAttribute("ads") == null)
+            httpSession.setAttribute("adPosMap", adService.posMap());
+
         // 如果session中没有user对象，避免服务器重启后session中的user信息丢失
+        User user = (User) httpSession.getAttribute("user");
         if (user == null) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
@@ -42,14 +53,10 @@ public class SessionInterceptor implements HandlerInterceptor {
                 }
                 if (token != null) {
                     // 重新从数据库中将用户信息查找出来
-                    UserExample userExample = new UserExample();
-                    userExample.createCriteria()
-                            .andTokenEqualTo(token);
-                    List<User> users = userMapper.selectByExample(userExample);
-                    if (users.size() != 0) {
-                        user = users.get(0);
-                        request.getSession().setAttribute("user", user);
-                        // System.out.println(users);
+                    List<User> dbUsers = userService.getByToken(token);
+                    if (dbUsers.size() > 0) {
+                        user = dbUsers.get(0);
+                        httpSession.setAttribute("user", user);
                     }
                 }
 
@@ -57,7 +64,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         }
         if(user!=null){
             Long unreadCount = notificationService.unreadCount(user.getId());
-            request.getSession().setAttribute("unreadCount", unreadCount);
+            httpSession.setAttribute("unreadCount", unreadCount);
         }
         return true;
     }

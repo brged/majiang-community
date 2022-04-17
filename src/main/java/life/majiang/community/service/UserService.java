@@ -31,4 +31,12 @@ public class UserService {
             userMapper.updateByPrimaryKeySelective(dbUser);
         }
     }
+
+    public List<User> getByToken(String token){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria()
+                .andTokenEqualTo(token);
+        List<User> users = userMapper.selectByExample(userExample);
+        return users;
+    }
 }
